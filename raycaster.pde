@@ -1,75 +1,75 @@
 class Vector
 {
-	int x, y;
+    int x, y;
 
-	Vector(int x, int y)
-	{
-		this.x = x;
-		this.y = y;
-	}
+    Vector(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
+    }
 }
 
 class Obstacle
 {
-	Vector position;
-	color fillColor;
+    Vector position;
+    color fillColor;
 
-	Obstacle(Vector position)
-	{
-		this.position = position;
-	}
+    Obstacle(Vector position)
+    {
+        this.position = position;
+    }
 
-	void display()
-	{
-		fill(fillColor);
-	}
+    void display()
+    {
+        fill(fillColor);
+    }
 }
 
 class RectangularObstacle extends Obstacle
 {
-	int width, height;
+    int width, height;
 
-	RectangularObstacle(Vector position, int width, int height)
-	{
-		super(position);
+    RectangularObstacle(Vector position, int width, int height)
+    {
+        super(position);
 
-		this.width = width;
-		this.height = height;
-	}
+        this.width = width;
+        this.height = height;
+    }
 
-	void display()
-	{
-		super.display();
-		rect(position.x, position.y, width, height);
-	}
+    void display()
+    {
+        super.display();
+        rect(position.x, position.y, width, height);
+    }
 }
 
 class App
 {
-	ArrayList<Obstacle> obstacles;
+    ArrayList<Obstacle> obstacles;
 
-	App()
-	{
+    App()
+    {
         setup();
-	}
+    }
 
-	void setup()
-	{
-		initObstacles();
-	}
+    void setup()
+    {
+        initObstacles();
+    }
 
     void update()
     {
 
     }
 
-	void initObstacles()
-	{
-		obstacles = new ArrayList<Obstacle>();
+    void initObstacles()
+    {
+        obstacles = new ArrayList<Obstacle>();
 
-		RectangularObstacle testRectObstacle = new RectangularObstacle(new Vector(300, 500), 100, 200);
-		obstacles.add(testRectObstacle);
-	}
+        RectangularObstacle testRectObstacle = new RectangularObstacle(new Vector(300, 500), 100, 200);
+        obstacles.add(testRectObstacle);
+    }
 
     void display()
     {
@@ -91,14 +91,14 @@ App app;
 
 void setup()
 {
-	fullScreen();
+    fullScreen();
 
     app = new App();
 }
 
 void draw()
 {
-	background(BACKGROUND_COLOR);
+    background(BACKGROUND_COLOR);
 
     app.update();
     app.display();
