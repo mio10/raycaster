@@ -12,5 +12,6 @@ The 'self-found' means that at the time when I was writing this demo app I didn'
 ### Windows
 *(may also work on Linux but wasn't tested)*
 ```console
-$ processing-java --sketch=<path_to_your_raycaster_directory> --run
+$ processing-java --sketch=path/to/raycaster --run
 ```
+**Note:** `path/to/raycaster` is a path to the directory containing `raycaster.pde`.
