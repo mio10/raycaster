@@ -63,6 +63,27 @@ class App
 
     }
 
+    Vector intersectionPoint(Vector a, Vector b, Vector c, Vector d)
+    {
+        float a1 = b.y - a.y;
+        float b1 = a.x - b.x;
+        float c1 = a1*a.x + b1*a.y;
+
+        float a2 = d.y - c.y;
+        float b2 = c.x - d.x;
+        float c2 = a2*c.x + b2*c.y;
+
+        float det = a1*b2 - a2*b1;
+
+        if (det == 0) {
+            return new Vector(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        } else {
+            int x = round((b2*c1 - b1*c2)/determinant);
+            int y = round((a1*c2 - a2*c1)/determinant);
+            return new Vector(x, y);
+        }
+    }
+
     void initObstacles()
     {
         obstacles = new ArrayList<Obstacle>();
