@@ -8,7 +8,7 @@ A small 2D ray casting demo programmed in [Processing](https://processing.org), 
 ## Requirements
 [Processing](https://processing.org)
 
-Full HD screen resolution is recommended because wall positions are hardcoded.
+Full HD screen resolution is recommended due to hardcoded wall positions.
 
 ## Quick start
 ### Windows
