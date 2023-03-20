@@ -9,38 +9,55 @@ class Vector
     }
 }
 
-class Obstacle
+class Line
 {
-    Vector position;
-    color fillColor;
+    Vector a, b;
 
-    Obstacle(Vector position)
+    Line(Vector a, Vector b)
     {
-        this.position = position;
+        this.a = a;
+        this.b = b;
     }
 
-    void display()
+    boolean intersectsWith(Line other)
     {
-        fill(fillColor);
+        Vector a1 = a;
+        Vector a2 = b;
+        Vector b1 = other.a;
+        Vector b2 = other.b;
+        float v1 = (b2.x - b1.x) * (a1.y - b1.y) - (b2.y - b1.y) * (a1.x - b1.x);
+        float v2 = (b2.x - b1.x) * (a2.y - b1.y) - (b2.y - b1.y) * (a2.x - b1.x);
+        float v3 = (a2.x - a1.x) * (b1.y - a1.y) - (a2.y - a1.y) * (b1.x - a1.x);
+        float v4 = (a2.x - a1.x) * (b2.y - a1.y) - (a2.y - a1.y) * (b2.x - a1.x);
+        return v1 * v2 < 0 && v3 * v4 < 0;
     }
 }
 
-class RectangularObstacle extends Obstacle
+class Obstacle
 {
-    int width, height;
+    ArrayList<Line> lines;
 
-    RectangularObstacle(Vector position, int width, int height)
+    Obstacle()
     {
-        super(position);
+        lines = new ArrayList<Line>();
+    }
 
-        this.width = width;
-        this.height = height;
+    void addLine(Line line)
+    {
+        lines.add(line);
     }
 
     void display()
     {
-        super.display();
-        rect(position.x, position.y, width, height);
+        stroke(OBSTACLE_COLOR);
+        fill(OBSTACLE_COLOR);
+        beginShape();
+        for (int i = 0; i < lines.size(); i++) {
+            Line line = lines.get(i);
+            vertex(line.a.x, line.a.y);
+            vertex(line.b.x, line.b.y);
+        }
+        endShape();
     }
 }
 
@@ -58,42 +75,49 @@ class App
         initObstacles();
     }
 
-    void update()
-    {
-
-    }
-
-    Vector intersectionPoint(Vector a, Vector b, Vector c, Vector d)
-    {
-        float a1 = b.y - a.y;
-        float b1 = a.x - b.x;
-        float c1 = a1*a.x + b1*a.y;
-
-        float a2 = d.y - c.y;
-        float b2 = c.x - d.x;
-        float c2 = a2*c.x + b2*c.y;
-
-        float det = a1*b2 - a2*b1;
-
-        if (det == 0) {
-            return new Vector(Integer.MAX_VALUE, Integer.MAX_VALUE);
-        } else {
-            int x = round((b2*c1 - b1*c2)/determinant);
-            int y = round((a1*c2 - a2*c1)/determinant);
-            return new Vector(x, y);
-        }
-    }
-
     void initObstacles()
     {
         obstacles = new ArrayList<Obstacle>();
 
-        RectangularObstacle testRectObstacle = new RectangularObstacle(new Vector(300, 500), 100, 200);
-        obstacles.add(testRectObstacle);
+        Obstacle obstacle = new Obstacle();
+        obstacle.addLine(new Line(new Vector(300, 500), new Vector(800, 600)));
+        obstacle.addLine(new Line(new Vector(800, 600), new Vector(700, 800)));
+        obstacle.addLine(new Line(new Vector(700, 800), new Vector(300, 800)));
+        obstacle.addLine(new Line(new Vector(300, 800), new Vector(300, 500)));
+        obstacles.add(obstacle);
+
+        obstacle = new Obstacle();
+        obstacle.addLine(new Line(new Vector(991, 349), new Vector(1188, 243)));
+        obstacle.addLine(new Line(new Vector(1188, 243), new Vector(1542, 308)));
+        obstacle.addLine(new Line(new Vector(1542, 308), new Vector(1072, 370)));
+        obstacle.addLine(new Line(new Vector(1072, 370), new Vector(991, 349)));
+        obstacles.add(obstacle);
+
+        obstacle = new Obstacle();
+        obstacle.addLine(new Line(new Vector(361, 261), new Vector(739, 289)));
+        obstacle.addLine(new Line(new Vector(739, 289), new Vector(748, 91)));
+        obstacle.addLine(new Line(new Vector(748, 91), new Vector(380, 110)));
+        obstacle.addLine(new Line(new Vector(380, 110), new Vector(361, 261)));
+        obstacles.add(obstacle);
+
+        obstacle = new Obstacle();
+        obstacle.addLine(new Line(new Vector(935, 651), new Vector(1264, 663)));
+        obstacle.addLine(new Line(new Vector(1264, 663), new Vector(1258, 960)));
+        obstacle.addLine(new Line(new Vector(1258, 960), new Vector(911, 958)));
+        obstacle.addLine(new Line(new Vector(911, 958), new Vector(935, 651)));
+        obstacles.add(obstacle);
+
+        obstacle = new Obstacle();
+        obstacle.addLine(new Line(new Vector(639, 429), new Vector(1137, 499)));
+        obstacle.addLine(new Line(new Vector(1137, 499), new Vector(1130, 563)));
+        obstacle.addLine(new Line(new Vector(1130, 563), new Vector(641, 487)));
+        obstacle.addLine(new Line(new Vector(641, 487), new Vector(639, 429)));
+        obstacles.add(obstacle);
     }
 
     void display()
     {
+        displayLight();
         displayObstacles();
     }
 
@@ -103,10 +127,47 @@ class App
             obstacles.get(i).display();
         }
     }
+
+    void displayLight()
+    {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                
+                Line ray = new Line(new Vector(x, y), new Vector(mouseX, mouseY));
+                
+                boolean noLight = false;
+
+                for (int i = 0; i < obstacles.size(); i++) {
+                    
+                    Obstacle obstacle = obstacles.get(i);
+                    
+                    for (int j = 0; j < obstacle.lines.size(); j++) {
+                        Line wall = obstacle.lines.get(j);
+                        noLight = ray.intersectsWith(wall);
+                        if (noLight) break;
+                    }
+
+                    if (noLight) break;                
+                }
+                
+                color lightColor;
+                if (noLight) {
+                    lightColor = color(BACKGROUND_COLOR);
+                } else {
+                    float intesivity = 1 - dist(x, y, mouseX, mouseY)/LIGHT_RANGE;
+                    lightColor = color(255*intesivity);
+                }
+                set(x, y, lightColor);
+
+            }
+        }
+    }
 }
 
-final color BACKGROUND_COLOR = color(50, 50, 50);
-final color OBSTACLE_COLOR = color(25, 25, 25);
+final color BACKGROUND_COLOR = color(0);
+final color OBSTACLE_COLOR = color(20);
+final color LIGHT_COLOR = color(200);
+final int LIGHT_RANGE = 500;
 
 App app;
 
@@ -121,6 +182,5 @@ void draw()
 {
     background(BACKGROUND_COLOR);
 
-    app.update();
     app.display();
 }
