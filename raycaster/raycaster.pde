@@ -128,6 +128,7 @@ class App
         }
     }
 
+    // TODO: Optimize the performance of this function, currently it is very slow
     void displayLight()
     {
         for (int x = 0; x < width; x++) {
